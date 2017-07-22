@@ -1,16 +1,21 @@
 $(function() {
     var socket = io();
 
-    // Emit event on form submit
-    $('form').submit(function() {
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        return false;
-    });
+    // Create obeservables
+    var formSubmit$ = Rx.Observable.fromEvent($('form'), 'submit');
+    var message$    = Rx.Observable.fromEvent(socket, 'chat message');
+
+    // Listen for form submit events
+    formSubmit$
+        .do(e => e.preventDefault())
+        .map(() => $('#message-box').val())
+        .do(() => $('#message-box').val(''))
+        .subscribe(message => socket.emit('chat message', message));
 
     // Listen for messages and attach to DOM
-    socket.on('chat message', function(msg) {
-        $('#messages').append($('<li>').text(msg));
-        window.scrollTo(0, document.body.scrollHeight);
-    });
+    message$
+        .subscribe(message => {
+            $('#messages').append($('<li>').text(message));
+            window.scrollTo(0, document.body.scrollHeight);
+        });
 });
