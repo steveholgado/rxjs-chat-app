@@ -1,5 +1,5 @@
 {
-  "name": "rx-chat",
+  "name": "rxchat",
   "version": "0.0.1",
   "description": "Chat app using RxJS and Socket.io",
   "main": "app.js",
