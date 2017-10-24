@@ -2,9 +2,9 @@
   "name": "rxchat",
   "version": "0.0.1",
   "description": "Chat app using RxJS and Socket.io",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node server.js"
   },
   "repository": "",
   "author": "Steve Holgado",
