@@ -3,7 +3,7 @@ const app     = express()
 const http    = require('http').Server(app)
 const io      = require('socket.io')(http)
 const port    = process.env.PORT || 3000
-const Rx      = require('rx')
+const Rx      = require('rxjs')
 
 // Serve static files
 app.use(express.static('public'))
@@ -22,42 +22,60 @@ const getAllUsers = () => {
     }))
 }
 
-// Listen for connections
-Rx.Observable
-  .fromEvent(io, 'connection')
-  .subscribe(client => {
+// Connection stream
+const connection$ = Rx.Observable.fromEvent(io, 'connection')
 
-    // Create disconnection observable
-    const disconnect$ = Rx.Observable.fromEvent(client, 'disconnect')
+// Disconnection stream
+const disconnect$ = connection$
+  .mergeMap(client => 
+    Rx.Observable
+      .fromEvent(client, 'disconnect')
+      .map(() => client)
+  )
 
-    // Send array of all users
-    client.emit('all users', getAllUsers())
-
-    // Listen for message events
+// Chat message stream
+const chatMessage$ = connection$
+  .mergeMap(client => 
     Rx.Observable
       .fromEvent(client, 'chat message')
+      .map(message => ({ client, message }))
       .takeUntil(disconnect$)
-      .subscribe(message => client.broadcast.emit('chat message', {
-        from: client.username,
-        message: message
-      }))
+  )
 
-    // Check for new user and store username in socket object
+// Save username stream
+const saveUsername$ = connection$
+  .mergeMap(client => 
     Rx.Observable
       .fromEvent(client, 'save username')
+      .map(username => ({ client, username }))
       .takeUntil(disconnect$)
-      .do(username => io.sockets.sockets[client.id].username = username)
-      .subscribe(username => {
-        client.broadcast.emit('new user', {
-          id: client.id,
-          username: username
-        })
-      })
+  )
 
-    // On disconnect, tell other users
-    disconnect$
-      .subscribe(() => client.broadcast.emit('remove user', client.id))
-    
+// On connection, send array of all users
+connection$
+  .subscribe(client => client.emit('all users', getAllUsers()))
+
+// On disconnect, tell other users
+disconnect$
+  .subscribe(client => client.broadcast.emit('remove user', client.id))
+
+// Listen for message events
+chatMessage$
+  .subscribe(({ client, message }) => {
+    client.broadcast.emit('chat message', {
+      from: client.username,
+      message: message
+    })
+  })
+
+// Check for new user and store username in socket object
+saveUsername$
+  .subscribe(({ client, username }) => {
+    io.sockets.sockets[client.id].username = username
+    client.broadcast.emit('new user', {
+      id: client.id,
+      username: username
+    })
   })
 
 // Start app listening

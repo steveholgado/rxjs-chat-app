@@ -10,7 +10,7 @@
   "author": "Steve Holgado",
   "dependencies": {
     "express": "^4.15.3",
-    "rx": "^4.1.0",
+    "rxjs": "^5.5.2",
     "socket.io": "^2.0.3"
   }
 }
