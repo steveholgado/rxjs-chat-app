@@ -1,16 +1,26 @@
 {
-  "name": "rxchat",
-  "version": "0.0.1",
+  "name": "rxjs-chat-app",
+  "version": "1.0.0",
   "description": "Chat app using RxJS and Socket.io",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "repository": "",
   "author": "Steve Holgado",
+  "main": "server/index.js",
+  "scripts": {
+    "server": "nodemon server/index.js",
+    "build": "webpack -p",
+    "build:watch": "webpack -p --watch",
+    "start": "npm run server"
+  },
   "dependencies": {
     "express": "^4.15.3",
+    "jquery": "^3.2.1",
+    "nodemon": "^1.14.6",
     "rxjs": "^5.5.2",
     "socket.io": "^2.0.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "webpack": "^3.10.0"
   }
 }
