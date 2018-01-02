@@ -1,16 +1,10 @@
 import Rx from 'rxjs'
-import { addMessage, addUser, removeUser } from './utilities'
+import { requestUsername, addMessage, addUser, removeUser } from './utilities'
 import connection from './connection'
 import submitAction$ from './actions'
 
 // Ask user for username
-let username = prompt('Please enter a username', '')
-
-// If no username, generate random
-if (!username) {
-  const randomNum = Math.floor(Math.random() * 1000)
-  username = 'user' + randomNum
-}
+let username = requestUsername()
 
 // Send username to server
 const username$ = Rx.Observable.of(username)
