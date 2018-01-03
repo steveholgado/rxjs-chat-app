@@ -12,7 +12,7 @@ const enterKeyPress$ = Rx.Observable
 
 // Message stream
 const submitAction$ = Rx.Observable
-	.merge(sendButtonClick$, enterKeyPress$)
+  .merge(sendButtonClick$, enterKeyPress$)
   .map(() => $('#message-box').val())
   .filter(message => message)
   .do(() => $('#message-box').val(''))
