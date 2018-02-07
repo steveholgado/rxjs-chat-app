@@ -24,7 +24,7 @@ connection.listen('chat message')
 // Listen for list of all connected users
 connection.listen('all users')
   .subscribe(users => {
-    addUser('everyone', 'everyone', true)
+    addUser('everyone', 'Everyone', true)
     users.forEach(user => addUser(user.id, user.username))
   })
 
