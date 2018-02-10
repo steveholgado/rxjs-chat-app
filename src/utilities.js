@@ -13,8 +13,9 @@ export const requestUsername = () => {
 }
 
 export const addMessage = (username, message) => {
-  const element = $('<li>').text(username + ': ' + message)
-  $('.message-list').append(element)
+  const elementUsername = $('<span>').text(username + ': ')
+  const elementListItem = $('<li>').append(elementUsername).append(message)
+  $('.message-list').append(elementListItem)
   
   window.scrollTo(0, document.body.scrollHeight)
 }
@@ -24,8 +25,8 @@ export const addUser = (id, username, clear) => {
     $('.user-select').html('')
   }
 
-  const element = $('<option>').val(id).text(username)
-  $('.user-select').append(element)
+  const elementOption = $('<option>').val(id).text(username)
+  $('.user-select').append(elementOption)
 }
 
 export const removeUser = (id) => {

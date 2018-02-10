@@ -5,7 +5,7 @@
 }
 body {
   font-size: 14px;
-  font-family: Helvetica, Arial;
+  font-family: Helvetica, Arial, sans-serif;
 }
 
 /* MESSAGE LIST
@@ -21,6 +21,9 @@ body {
 }
 .message-list li:nth-child(odd) {
   background: #EEE;
+}
+.message-list li span {
+  color: #AAA;
 }
 
 /* ACTION BAR
@@ -69,6 +72,7 @@ body {
   background-color: #EEE;
   border: none;
   outline: none;
+  font-size: 14px;
   cursor: pointer;
   transition: all .25s ease;
 }
@@ -84,6 +88,7 @@ body {
   margin-right: .5%;
   border: 0;
   outline: none;
+  font-size: 14px;
 }
 
 /* SEND BUTTON
@@ -93,6 +98,7 @@ body {
   padding: 10px;
   background-color: #74CADA;
   border: none;
+  font-size: 14px;
   cursor: pointer;
   transition: all .25s ease;
 }
@@ -102,6 +108,18 @@ body {
 
 /* MEDIA QUERIES
 ************************************************** */
+@media screen and (min-width: 600px) {
+  .user-select-label {
+    width: 20%;
+  }
+  .message-input {
+    width: 65%;
+  }
+  .send-btn {
+    width: 15%;
+  }
+}
+
 @media screen and (min-width: 769px) {
   .user-select-label {
     width: 15%;
