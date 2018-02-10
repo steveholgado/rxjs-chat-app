@@ -33,14 +33,24 @@ disconnect$
 connection$
   .mergeMap(({ client }) => {
     return Rx.Observable.fromEvent(client, 'chat message')
-      .map(message => ({ client, message }))
+      .map(data => ({ client, data }))
       .takeUntil(disconnect$)
   })
-  .subscribe(({ client, message }) => {
-    client.broadcast.emit('chat message', {
+  .subscribe(({ client, data }) => {
+    if (!data.socketId) return
+
+    const messageObj = {
       from: client.username,
-      message: message
-    })
+      message: data.message
+    }
+
+    if (data.socketId == 'everyone') {
+      // Send message to everyone
+      client.broadcast.emit('chat message', messageObj)
+    } else {
+      // Send message only to selected socket
+      client.broadcast.to(data.socketId).emit('chat message', messageObj)
+    }
   })
 
 // Check for new user and store username in socket object

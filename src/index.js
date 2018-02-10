@@ -4,15 +4,16 @@ import connection from './connection'
 import submitAction$ from './actions'
 
 // Ask user for username
-let username = requestUsername()
+const username$ = Rx.Observable.of(requestUsername())
 
 // Send username to server
-const username$ = Rx.Observable.of(username)
 connection.send(username$, 'save username')
 
-// Add messages to DOM
+// Add own chat messages to DOM
 const submitMessage$ = submitAction$
-  .do(message => addMessage(username, message))
+  .withLatestFrom(username$)
+  .do(([ data, username ]) => addMessage(username, data.message))
+  .map(([ data ]) => data)
 
 // Send chat messages to server
 connection.send(submitMessage$, 'chat message')
