@@ -12,10 +12,12 @@ const { getAllUsers } = require('./utilities')
 app.use(express.static('public'))
 
 // Routes
-app.get('/', (req, res) => res.sendFile('/index.html'))
+app.get('/', (req, res) => {
+  res.sendFile('public/index.html', { root: __dirname })
+})
 
 // Start app listening
-http.listen(port, () => console.log('listening on *:' + port))
+http.listen(port, () => console.log('listening on port: ' + port))
 
 // On connection, send array of all users
 connection$
