@@ -1,8 +1,6 @@
 const Rx = require('rxjs')
 
-const createStreams = (io) => {
-
-  const io$ = Rx.Observable.of(io)
+const createStreams = (io$) => {
 
   const connection$ = io$
     .mergeMap(io => {
@@ -16,7 +14,7 @@ const createStreams = (io) => {
         .map(() => client)
     })
 
-  return { io$, connection$, disconnect$ }
+  return { connection$, disconnect$ }
 
 }
 

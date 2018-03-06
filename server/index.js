@@ -1,20 +1,16 @@
 const express = require('express')
 const app     = express()
 const http    = require('http').Server(app)
-const io      = require('socket.io')(http)
+const io      = require('socket.io')
 const Rx      = require('rxjs')
 const port    = process.env.PORT || 3000
 
-const { connection$, disconnect$ } = require('./connection')(io)
+const io$ = Rx.Observable.of(io(http))
+const { connection$, disconnect$ } = require('./connection')(io$)
 const { getAllUsers } = require('./utilities')
 
 // Serve static files
 app.use(express.static('public'))
-
-// Routes
-app.get('/', (req, res) => {
-  res.sendFile('public/index.html', { root: __dirname })
-})
 
 // Start app listening
 http.listen(port, () => console.log('listening on port: ' + port))
