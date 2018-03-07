@@ -5,8 +5,6 @@ const io      = require('socket.io')
 const Rx      = require('rxjs')
 const port    = process.env.PORT || 3000
 
-const io$ = Rx.Observable.of(io(http))
-const { connection$, disconnect$ } = require('./connection')(io$)
 const { getAllUsers } = require('./utilities')
 
 // Serve static files
@@ -14,6 +12,39 @@ app.use(express.static('public'))
 
 // Start app listening
 http.listen(port, () => console.log('listening on port: ' + port))
+
+// Initialise Socket.IO and wrap in observable
+const io$ = Rx.Observable.of(io(http))
+
+// Stream of connections
+const connection$ = io$
+  .switchMap(io => {
+    return Rx.Observable.fromEvent(io, 'connection')
+      .map(client => ({ io, client }))
+  })
+
+// Stream of disconnections
+const disconnect$ = connection$
+  .mergeMap(({ client }) => {
+    return Rx.Observable.fromEvent(client, 'disconnect')
+      .map(() => client)
+  })
+
+// Stream of 'chat message' events
+const chatMessage$ = connection$
+  .mergeMap(({ client }) => {
+    return Rx.Observable.fromEvent(client, 'chat message')
+      .takeUntil(Rx.Observable.fromEvent(client, 'disconnect'))
+      .map(data => ({ client, data }))
+  })
+
+// Stream of 'save username' events
+const saveUsername$ = connection$
+  .mergeMap(({ io, client }) => {
+    return Rx.Observable.fromEvent(client, 'save username')
+      .takeUntil(Rx.Observable.fromEvent(client, 'disconnect'))
+      .map(username => ({ io, client, username }))
+  })
 
 // On connection, send array of all users
 connection$
@@ -27,13 +58,8 @@ disconnect$
     client.broadcast.emit('remove user', client.id)
   })
 
-// Listen for message events
-connection$
-  .mergeMap(({ client }) => {
-    return Rx.Observable.fromEvent(client, 'chat message')
-      .map(data => ({ client, data }))
-      .takeUntil(disconnect$)
-  })
+// Listen for message events and send to relevant users
+chatMessage$
   .subscribe(({ client, data }) => {
     if (!data.socketId) return
 
@@ -52,12 +78,7 @@ connection$
   })
 
 // Check for new user and store username in socket object
-connection$
-  .mergeMap(({ io, client }) => {
-    return Rx.Observable.fromEvent(client, 'save username')
-      .map(username => ({ io, client, username }))
-      .takeUntil(disconnect$)
-  })
+saveUsername$
   .subscribe(({ io, client, username }) => {
     io.sockets.sockets[client.id].username = username
     client.broadcast.emit('new user', {
