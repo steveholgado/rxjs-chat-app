@@ -4,7 +4,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, 'public'),
-    filename: 'bundle.min.js'
+    filename: 'bundle.js'
   },
   module: {
     loaders: [

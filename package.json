@@ -6,8 +6,8 @@
   "main": "server/index.js",
   "scripts": {
     "server": "nodemon server/index.js",
-    "build": "webpack -p",
-    "build:watch": "webpack -p --watch",
+    "build": "webpack",
+    "build:watch": "webpack --watch",
     "start": "npm run server"
   },
   "dependencies": {
