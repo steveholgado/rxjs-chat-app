@@ -4,13 +4,13 @@ import io from 'socket.io-client'
 const socket$ = Rx.Observable.of(io())
 
 const connection$ = socket$
-  .mergeMap(socket => {
+  .switchMap(socket => {
     return Rx.Observable.fromEvent(socket, 'connect')
       .map(() => socket)
   })
 
 const disconnect$ = socket$
-  .mergeMap(socket => {
+  .switchMap(socket => {
     return Rx.Observable.fromEvent(socket, 'disconnect')
   })
 
