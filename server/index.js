@@ -71,7 +71,7 @@ listen('chat message')
     }
   })
 
-// Check for new user and store username in socket object
+// Listen for new usernames and store in corresponding socket object
 listen('save username')
   .subscribe(({ io, client, data }) => {
     io.sockets.sockets[client.id].username = data
