@@ -1,13 +1,13 @@
 import Rx from 'rxjs'
 import { requestUsername, addMessage, addUser, removeUser } from './utilities'
-import connection from './connection'
+import { send, listen } from './connection'
 import submitAction$ from './actions'
 
 // Ask user for username
 const username$ = Rx.Observable.of(requestUsername())
 
 // Send username to server
-connection.send(username$, 'save username')
+send(username$, 'save username')
 
 // Add own chat messages to DOM
 const submitMessage$ = submitAction$
@@ -16,23 +16,23 @@ const submitMessage$ = submitAction$
   .map(([ data ]) => data)
 
 // Send chat messages to server
-connection.send(submitMessage$, 'chat message')
+send(submitMessage$, 'chat message')
 
 // Listen for chat messages
-connection.listen('chat message')
+listen('chat message')
   .subscribe(data => addMessage(data.from, data.message))
 
 // Listen for list of all connected users
-connection.listen('all users')
+listen('all users')
   .subscribe(users => {
     addUser('everyone', 'Everyone', true)
     users.forEach(user => addUser(user.id, user.username))
   })
 
 // Listen for new users
-connection.listen('new user')
+listen('new user')
   .subscribe(user => addUser(user.id, user.username))
 
 // Listen for user removals
-connection.listen('remove user')
+listen('remove user')
   .subscribe(id => removeUser(id))

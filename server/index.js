@@ -30,21 +30,15 @@ const disconnect$ = connection$
       .map(() => client)
   })
 
-// Stream of 'chat message' events
-const chatMessage$ = connection$
-  .mergeMap(({ client }) => {
-    return Rx.Observable.fromEvent(client, 'chat message')
-      .takeUntil(Rx.Observable.fromEvent(client, 'disconnect'))
-      .map(data => ({ client, data }))
-  })
-
-// Stream of 'save username' events
-const saveUsername$ = connection$
-  .mergeMap(({ io, client }) => {
-    return Rx.Observable.fromEvent(client, 'save username')
-      .takeUntil(Rx.Observable.fromEvent(client, 'disconnect'))
-      .map(username => ({ io, client, username }))
-  })
+// On connection, listen for event
+const listen = (event) => {
+  return connection$
+    .mergeMap(({ io, client }) => {
+      return Rx.Observable.fromEvent(client, event)
+        .takeUntil(Rx.Observable.fromEvent(client, 'disconnect'))
+        .map(data => ({ io, client, data }))
+    })
+}
 
 // On connection, send array of all users
 connection$
@@ -59,7 +53,7 @@ disconnect$
   })
 
 // Listen for message events and send to relevant users
-chatMessage$
+listen('chat message')
   .subscribe(({ client, data }) => {
     if (!data.socketId) return
 
@@ -78,11 +72,11 @@ chatMessage$
   })
 
 // Check for new user and store username in socket object
-saveUsername$
-  .subscribe(({ io, client, username }) => {
-    io.sockets.sockets[client.id].username = username
+listen('save username')
+  .subscribe(({ io, client, data }) => {
+    io.sockets.sockets[client.id].username = data
     client.broadcast.emit('new user', {
       id: client.id,
-      username: username
+      username: data
     })
   })
