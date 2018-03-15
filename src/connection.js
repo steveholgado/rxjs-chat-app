@@ -3,7 +3,7 @@ import io from 'socket.io-client'
 
 const socket$ = Rx.Observable.of(io())
 
-const connection$ = socket$
+const connect$ = socket$
   .switchMap(socket => {
     return Rx.Observable.fromEvent(socket, 'connect')
       .map(() => socket)
@@ -16,14 +16,14 @@ const disconnect$ = socket$
 
 // On connection, listen for event
 export const listen = (event) => {
-  return connection$
+  return connect$
     .mergeMap(socket => Rx.Observable.fromEvent(socket, event))
     .takeUntil(disconnect$)
 }
 
 // On connection, emit data from observable
 export const send = (observable, event) => {
-  return connection$
+  connect$
     .mergeMap(socket => observable.map(data => ({ socket, data })))
     .takeUntil(disconnect$)
     .subscribe(({ socket, data }) => socket.emit(event, data))
