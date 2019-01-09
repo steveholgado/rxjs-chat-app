@@ -1,27 +1,28 @@
 {
   "name": "rxjs-chat-app",
   "version": "1.0.0",
-  "description": "Chat app using RxJS and Socket.IO",
+  "description": "Chat app built with RxJS and Socket.IO",
   "author": "Steve Holgado",
-  "main": "server/index.js",
+  "main": "server.js",
   "scripts": {
-    "server": "nodemon server/index.js",
-    "build": "webpack",
-    "build:watch": "webpack --watch",
-    "start": "npm run server"
+    "server": "NODE_ENV=production node server.js",
+    "build": "NODE_ENV=production webpack -p",
+    "dev": "NODE_ENV=development concurrently \"webpack --watch\" \"nodemon server.js\"",
+    "start": "npm run dev"
   },
   "dependencies": {
-    "express": "^4.15.3",
-    "jquery": "^3.2.1",
-    "nodemon": "^1.14.6",
-    "rxjs": "^5.5.2",
-    "socket.io": "^2.0.3",
-    "socket.io-client": "^2.0.4"
+    "express": "^4.16.4",
+    "rxjs": "^6.3.3",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.1",
-    "webpack": "^3.10.0"
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "babel-loader": "^8.0.4",
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.18.9",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.1"
   }
 }

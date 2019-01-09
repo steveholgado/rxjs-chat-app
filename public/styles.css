@@ -10,25 +10,25 @@ body {
 
 /* MESSAGE LIST
 ************************************************** */
-.message-list {
+.messages {
   list-style-type: none;
   margin: 0;
   margin-bottom: 90px;
   padding: 0;
 }
-.message-list li {
+.messages li {
   padding: 10px 15px;
 }
-.message-list li:nth-child(odd) {
+.messages li:nth-child(odd) {
   background: #EEE;
 }
-.message-list li span {
+.messages li span {
   color: #AAA;
 }
 
 /* ACTION BAR
 ************************************************** */
-.action-bar {
+.actions {
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -41,12 +41,12 @@ body {
 
 /* USER SELECT
 ************************************************** */
-.user-select-label {
+.users-label {
   position: relative;
   width: 30%;
   border-right: 1px solid transparent;
 }
-.user-select-label:after {
+.users-label:after {
   content: '';
   position: absolute;
   top: 50%;
@@ -61,7 +61,7 @@ body {
   pointer-events: none;
 }
 
-.user-select {
+.users {
   width: 100%;
   padding: 10px;
   padding-right: 20px;
@@ -76,13 +76,13 @@ body {
   cursor: pointer;
   transition: all .25s ease;
 }
-.user-select:hover {
+.users:hover {
   background-color: #ccc;
 }
 
 /* MESSAGE INPUT
 ************************************************** */
-.message-input {
+.input {
   width: 45%;
   padding: 10px;
   margin-right: .5%;
@@ -93,7 +93,7 @@ body {
 
 /* SEND BUTTON
 ************************************************** */
-.send-btn {
+.send {
   width: 25%;
   padding: 10px;
   background-color: #74CADA;
@@ -102,32 +102,32 @@ body {
   cursor: pointer;
   transition: all .25s ease;
 }
-.send-btn:hover {
+.send:hover {
   background-color: #3FB5CB;
 }
 
 /* MEDIA QUERIES
 ************************************************** */
 @media screen and (min-width: 600px) {
-  .user-select-label {
+  .users-label {
     width: 20%;
   }
-  .message-input {
+  .input {
     width: 65%;
   }
-  .send-btn {
+  .send {
     width: 15%;
   }
 }
 
 @media screen and (min-width: 769px) {
-  .user-select-label {
+  .users-label {
     width: 15%;
   }
-  .message-input {
+  .input {
     width: 75%;
   }
-  .send-btn {
+  .send {
     width: 10%;
   }
 }

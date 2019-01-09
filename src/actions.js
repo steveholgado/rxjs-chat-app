@@ -1,31 +1,35 @@
-import Rx from 'rxjs'
-import $ from 'jquery'
+import { fromEvent, merge } from 'rxjs'
+import { map, filter, tap, startWith, withLatestFrom } from 'rxjs/operators'
 
 // Clicks on 'Send' button
-const sendButtonClick$ = Rx.Observable
-  .fromEvent($('.send-btn'), 'click')
+const sendButtonClick$ = fromEvent(document.querySelector('.send'), 'click')
 
 // Enter key presses in message input field
-const enterKeyPress$ = Rx.Observable
-  .fromEvent($('.message-input'), 'keypress')
-  .filter(e => e.keyCode === 13 || e.which === 13)
+const enterKeyPress$ = fromEvent(document.querySelector('.input'), 'keypress')
+  .pipe(
+    filter(e => e.keyCode === 13 || e.which === 13)
+  )
 
 // Message message send stream
-const sendMessage$ = Rx.Observable
-  .merge(sendButtonClick$, enterKeyPress$)
-  .map(() => $('.message-input').val())
-  .filter(message => message)
-  .do(() => $('.message-input').val(''))
+const sendMessage$ = merge(sendButtonClick$, enterKeyPress$)
+  .pipe(
+    map(() => document.querySelector('.input').value),
+    filter(message => message),
+    tap(() => document.querySelector('.input').value = '')
+  )
 
 // Changes to user-select drop-down
-const userSelectChange$ = Rx.Observable
-  .fromEvent($('.user-select'), 'change')
-  .map(e => e.target.value)
-  .startWith('everyone')
+const userSelectChange$ = fromEvent(document.querySelector('.users'), 'change')
+  .pipe(
+    map(e => e.target.value),
+    startWith('everyone')
+  )
 
 // Message stream
 const submitAction$ = sendMessage$
-  .withLatestFrom(userSelectChange$)
-  .map(([ message, socketId ]) => ({ message, socketId }))
+  .pipe(
+    withLatestFrom(userSelectChange$),
+    map(([ message, id ]) => ({ message, id }))
+  )
 
 export default submitAction$

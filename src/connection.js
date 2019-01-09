@@ -1,30 +1,38 @@
-import Rx from 'rxjs'
+import { of, fromEvent } from 'rxjs'
+import { map, mapTo, switchMap } from 'rxjs/operators'
 import io from 'socket.io-client'
 
-const socket$ = Rx.Observable.of(io())
+// Initialise Socket.IO and wrap in observable
+const socket$ = of(io())
 
+// Stream of connections
 const connect$ = socket$
-  .switchMap(socket => {
-    return Rx.Observable.fromEvent(socket, 'connect')
-      .map(() => socket)
-  })
-
-const disconnect$ = socket$
-  .switchMap(socket => {
-    return Rx.Observable.fromEvent(socket, 'disconnect')
-  })
+  .pipe(
+    switchMap(socket =>
+      fromEvent(socket, 'connect')
+        .pipe(
+          mapTo(socket)
+        )
+    )
+  )
 
 // On connection, listen for event
-export const listen = (event) => {
-  return connect$
-    .mergeMap(socket => Rx.Observable.fromEvent(socket, event))
-    .takeUntil(disconnect$)
-}
+export const listenOnConnect = (event) =>
+  connect$
+    .pipe(
+      switchMap(socket =>
+        fromEvent(socket, event)
+      )
+    )
 
 // On connection, emit data from observable
-export const send = (observable, event) => {
+export const emitOnConnect = (observable) =>
   connect$
-    .mergeMap(socket => observable.map(data => ({ socket, data })))
-    .takeUntil(disconnect$)
-    .subscribe(({ socket, data }) => socket.emit(event, data))
-}
+    .pipe(
+      switchMap(socket =>
+        observable
+          .pipe(
+            map(data => ({ socket, data }))
+          )
+      )
+    )

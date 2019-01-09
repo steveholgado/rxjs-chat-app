@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 export const requestUsername = () => {
   let username = prompt('Please enter a username', '')
 
@@ -13,22 +11,30 @@ export const requestUsername = () => {
 }
 
 export const addMessage = (username, message) => {
-  const elementUsername = $('<span>').text(username + ': ')
-  const elementListItem = $('<li>').append(elementUsername).append(message)
-  $('.message-list').append(elementListItem)
+  document.querySelector('.messages')
+    .insertAdjacentHTML(
+      'beforeend',
+      `<li><span>${username}: </span>${message}</li>`
+    )
   
   window.scrollTo(0, document.body.scrollHeight)
 }
 
-export const addUser = (id, username, clear) => {
-  if (clear) {
-    $('.user-select').html('')
-  }
+export const addUser = (id, username) => {
+  document.querySelector('.users')
+    .insertAdjacentHTML(
+      'beforeend',
+      `<option value=${id}>${username}</option>`
+    )
+}
 
-  const elementOption = $('<option>').val(id).text(username)
-  $('.user-select').append(elementOption)
+export const clearUsers = () => {
+  document.querySelector('.users').innerHTML = ''
 }
 
 export const removeUser = (id) => {
-  $('.user-select option[value=' + id + ']').remove()
+  const optionToRemove = document.querySelector(`.users option[value="${id}"]`)
+  if (optionToRemove) {
+    optionToRemove.parentNode.removeChild(optionToRemove)
+  }
 }
