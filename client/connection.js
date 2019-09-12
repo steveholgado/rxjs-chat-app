@@ -1,5 +1,5 @@
 import { of, fromEvent } from 'rxjs'
-import { map, mapTo, switchMap } from 'rxjs/operators'
+import { map, switchMap } from 'rxjs/operators'
 import io from 'socket.io-client'
 
 // Initialise Socket.IO and wrap in observable
@@ -11,28 +11,30 @@ const connect$ = socket$
     switchMap(socket =>
       fromEvent(socket, 'connect')
         .pipe(
-          mapTo(socket)
+          map(() => socket)
         )
     )
   )
 
 // On connection, listen for event
-export const listenOnConnect = (event) =>
-  connect$
+export function listenOnConnect(event) {
+  return connect$
     .pipe(
       switchMap(socket =>
         fromEvent(socket, event)
       )
     )
+}
 
 // On connection, emit data from observable
-export const emitOnConnect = (observable) =>
-  connect$
+export function emitOnConnect(observable$) {
+  return connect$
     .pipe(
       switchMap(socket =>
-        observable
+        observable$
           .pipe(
             map(data => ({ socket, data }))
           )
       )
     )
+}

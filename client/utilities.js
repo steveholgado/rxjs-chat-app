@@ -1,16 +1,22 @@
-export const requestUsername = () => {
-  let username = prompt('Please enter a username', '')
+export function getUsername() {
+  const username = sessionStorage.getItem('username')
 
-  // If no username, generate random
-  if (!username) {
+  if (username) return username
+
+  let newUsername = prompt('Please enter a username', '')
+
+  // If no username entered by user, generate random
+  if (!newUsername) {
     const randomNum = Math.floor(Math.random() * 1000)
-    username = 'user' + randomNum
+    newUsername = 'user' + randomNum
   }
 
-  return username
+  sessionStorage.setItem('username', newUsername)
+
+  return newUsername
 }
 
-export const addMessage = (username, message) => {
+export function addMessage(username, message) {
   document.querySelector('.messages')
     .insertAdjacentHTML(
       'beforeend',
@@ -20,7 +26,7 @@ export const addMessage = (username, message) => {
   window.scrollTo(0, document.body.scrollHeight)
 }
 
-export const addUser = (id, username) => {
+export function addUser(id, username) {
   document.querySelector('.users')
     .insertAdjacentHTML(
       'beforeend',
@@ -28,12 +34,17 @@ export const addUser = (id, username) => {
     )
 }
 
-export const clearUsers = () => {
+export function clearUsers() {
   document.querySelector('.users').innerHTML = ''
 }
 
-export const removeUser = (id) => {
+export function clearUserInput() {
+  document.querySelector('.input').value = ''
+}
+
+export function removeUser(id) {
   const optionToRemove = document.querySelector(`.users option[value="${id}"]`)
+
   if (optionToRemove) {
     optionToRemove.parentNode.removeChild(optionToRemove)
   }

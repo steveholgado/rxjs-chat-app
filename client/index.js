@@ -1,32 +1,28 @@
 import { of } from 'rxjs'
-import { map, tap, withLatestFrom } from 'rxjs/operators'
-import { requestUsername, addMessage, addUser, clearUsers, removeUser } from './utilities'
+import { withLatestFrom } from 'rxjs/operators'
+import { getUsername, addMessage, addUser, clearUsers, clearUserInput, removeUser } from './utilities'
 import { listenOnConnect, emitOnConnect } from './connection'
-import submitAction$ from './actions'
+import sendMessage$ from './actions'
 
-// Ask user for username
-const username$ = of(requestUsername())
-
-// Add own chat messages to DOM
-const submitMessage$ = submitAction$
-  .pipe(
-    withLatestFrom(username$),
-    tap(([ data, username ]) =>
-      addMessage(username, data.message)
-    ),
-    map(([ data ]) => data)
-  )
+const username$ = of(getUsername())
 
 // Send username to server
 emitOnConnect(username$)
   .subscribe(({ socket, data }) => {
-    socket.emit('save username', data)
+    const username = data
+    socket.emit('save username', username)
   })
 
 // Send chat messages to server
-emitOnConnect(submitMessage$)
-  .subscribe(({ socket, data }) => {
-    socket.emit('chat message', data)
+emitOnConnect(sendMessage$)
+  .pipe(
+    withLatestFrom(username$)
+  )
+  .subscribe(([ { socket, data }, username ]) => {
+    const [ message, id ] = data
+    clearUserInput()
+    addMessage(username, message) // Add own chat message to DOM
+    socket.emit('chat message', { id, message })
   })
 
 // Listen for chat messages
