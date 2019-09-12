@@ -30,9 +30,14 @@ listenOnConnect('chat message')
 
     if (!id) return
 
-    id === 'everyone'
-      ? client.broadcast.emit('chat message', { from, message }) // Send to everyone
-      : client.broadcast.to(id).emit('chat message', { from, message }) // Send only to recipient
+    if (id === 'everyone') {
+      // Send to everyone
+      client.broadcast.emit('chat message', { from, message })
+    }
+    else {
+      // Send only to recipient
+      client.broadcast.to(id).emit('chat message', { from, message })
+    }
   })
 
 // Listen for new usernames and store in corresponding socket object
