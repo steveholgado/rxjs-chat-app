@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Chat app built with RxJS and Socket.IO",
   "author": "Steve Holgado",
-  "main": "server.js",
+  "main": "server/index.js",
   "scripts": {
     "build": "parcel build client/index.html",
     "server": "NODE_ENV=production node server/index.js",
