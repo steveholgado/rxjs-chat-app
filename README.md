@@ -2,6 +2,10 @@
 
 Chat app built with RxJS and Socket.IO.
 
+## Tutorial
+
+[Follow a tutorial to build this application](./TUTORIAL.md)
+
 ## Development
 
 ```
